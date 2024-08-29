@@ -1,0 +1,100 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: R-CMD-check.yaml
+
+permissions: read-all
+
+jobs:
+  list:
+    name: "List Universe Packages"
+    runs-on: ubuntu-latest
+    outputs:
+      pkgs: ${{ steps.gather.outputs.pkgs }}
+    steps:
+      - id: gather
+        run: |
+          echo "pkgs=curl -sSL https://hubverse-org.r-universe.dev/api/packages \
+          | jq -r '[.[].Package] | map(select(. | startswith(\"hub\"))'" \
+          >> ${GITHUB_OUTPUT}
+  fetch:
+    needs: list
+    name: "Fetch Universe Packages"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.list.outputs.pkgs) }}
+    steps:
+      - id: gather
+      - id: download
+        run: |
+          curl -sSL -o pkg.zip https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.package }}
+          payload=$(unzip -l pkg.zip | grep tar.gz | sed 's/ \+//g' | cut -d, -f 5)
+          echo "tarfile=$(basename ${payload})" >> ${GITHUB_OUTPUT}
+          mkdir -p ${{ runner.temp }}/package
+          unzip -j pkg.zip ${payload}
+
+      - id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.package }}
+          path: ${{ steps.download.outputs.tarfile }}
+
+  R-CMD-check:
+    needs: [list, fetch]
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.pkg }} --- ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {pkg: ${{ fromJSON(needs.list.outputs.pkgs) }}, os: macos-latest,   r: 'release'}
+          - {pkg: ${{ fromJSON(needs.list.outputs.pkgs) }}, os: windows-latest, r: 'release'}
+          - {pkg: ${{ fromJSON(needs.list.outputs.pkgs) }}, os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {pkg: ${{ fromJSON(needs.list.outputs.pkgs) }}, os: ubuntu-latest,   r: 'release'}
+          - {pkg: ${{ fromJSON(needs.list.outputs.pkgs) }}, os: ubuntu-latest,   r: 'oldrel-1'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.config.pkg }}
+          path: ${{ runner.temp }}
+      - id: fetch-pkg
+        run: |
+          mkdir -p ${{ runner.temp }}/src
+          unzip ${{ runner.temp }}/${{ matrix.config.pkg }}.zip \
+          -d ${{ runner.temp }}/src
+          tar -xzvf ${{ runner.temp }}/src && \
+          mv ${{ matrix.config.pkg }}/* . && \
+          rm ${{ matrix.config.pkg }}
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
