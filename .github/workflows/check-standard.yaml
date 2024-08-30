@@ -79,7 +79,6 @@ jobs:
       - id: fetch-pkg
         run: |
           cd ${{ runner.temp }}
-          ls -l 
           file ${{ matrix.pkg.file }}
           # extract to working dir
           tar -xzvf ${{ matrix.pkg.file }} 
