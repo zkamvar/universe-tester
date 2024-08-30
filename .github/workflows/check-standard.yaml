@@ -78,14 +78,16 @@ jobs:
           path: ${{ runner.temp }}
       - id: fetch-pkg
         run: |
-          ls -l ${{ runner.temp }}/
-          file ${{ runner.temp }}/${{ matrix.pkg.file }}
+          setwd ${{ runner.temp }}
+          ls -l 
+          file ${{ matrix.pkg.file }}
           # extract to working dir
-          tar -xzvf ${{ runner.temp }}/${{ matrix.pkg.file }}
+          tar -xzvf ${{ matrix.pkg.file }} 
           # move package contents to working dir
-          mv -v ${{ matrix.pkg.package }}/* .
+          mv -v ${{ matrix.pkg.package }}/* ${{ github.workspace }}
           # removing empty folder
           rm -rf ${{ matrix.pkg.package }}
+          ls -l ${{ github.workspace }}
 
       # - uses: r-lib/actions/setup-pandoc@v2
 
