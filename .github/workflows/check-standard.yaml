@@ -81,7 +81,7 @@ jobs:
           ls -l ${{ runner.temp }}/
           file ${{ runner.temp }}/${{ matrix.pkg.file }}
           # extract to working dir
-          tar -xzvf "${{ runner.temp }}/${{ matrix.pkg.file }}
+          tar -xzvf ${{ runner.temp }}/${{ matrix.pkg.file }}
           # move package contents to working dir
           mv -v ${{ matrix.pkg.package }}/* .
           # removing empty folder
