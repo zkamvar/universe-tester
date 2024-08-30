@@ -81,11 +81,11 @@ jobs:
       - id: fetch-pkg
         run: |
           ls -l "${{ runner.temp }}/"
-          file "${{ runner.temp }}/*.tar.gz"
+          file "${{ runner.temp }}/${{ matrix.pkg }}"*.tar.gz
           # extract to working dir
-          tar -xzvf "${{ runner.temp }}/*.tar.gz"
+          tar -xzvf "${{ runner.temp }}/${{ matrix.pkg }}"*.tar.gz
           # move package contents to working dir
-          mv "${{ matrix.pkg }}/*" .
+          mv "${{ matrix.pkg }}"/* .
           # removing empty folder
           rm "${{ matrix.pkg }}"
 
