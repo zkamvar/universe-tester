@@ -31,7 +31,6 @@ jobs:
       matrix:
         package: ${{ fromJSON(needs.list.outputs.pkgs) }}
     steps:
-      - id: gather
       - id: download
         run: |
           curl -sSL -o pkg.zip https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.package }}
