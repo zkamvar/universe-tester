@@ -80,13 +80,9 @@ jobs:
           path: ${{ runner.temp }}
       - id: fetch-pkg
         run: |
-          mkdir -p "${{ runner.temp }}/src"
-          # unzip artifact into tmp dir
           ls -l "${{ runner.temp }}"
-          unzip "${{ runner.temp }}/${{ matrix.pkg }}.zip" \
-          -d "${{ runner.temp }}/src"
-          # untar to working dir
-          tar -xzvf "${{ runner.temp }}/src/*"
+          # extract to working dir
+          tar -xzvf "${{ runner.temp }}/${{ matrix.pkg }}*.tar.gz"
           # move package contents to working dir
           mv "${{ matrix.pkg }}/*" .
           # removing empty folder
