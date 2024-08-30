@@ -84,8 +84,6 @@ jobs:
           tar -xzvf ${{ matrix.pkg.file }} 
           # move package contents to working dir
           mv -v ${{ matrix.pkg.package }}/* ${{ github.workspace }}
-          # removing empty folder
-          rm -rf ${{ matrix.pkg.package }}
           ls -l ${{ github.workspace }}
 
       # - uses: r-lib/actions/setup-pandoc@v2
