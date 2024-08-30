@@ -21,9 +21,9 @@ jobs:
         run: |
           echo "pkgs=curl -sSL https://hubverse-org.r-universe.dev/api/packages \
           | jq -r '[.[].Package] | map(select(. | startswith(\"hub\"))'" \
-          >> ${GITHUB_OUTPUT}
+          >> "$GITHUB_OUTPUT"
       - id: show-output
-        run: cat ${GITHUB_OUTPUT}
+        run: cat "$GITHUB_OUTPUT"
   fetch:
     needs: list
     name: "Fetch Universe Packages"
@@ -37,7 +37,7 @@ jobs:
         run: |
           curl -sSL -o pkg.zip https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.package }}
           payload=$(unzip -l pkg.zip | grep tar.gz | sed 's/ \+//g' | cut -d, -f 5)
-          echo "tarfile=$(basename ${payload})" >> ${GITHUB_OUTPUT}
+          echo "tarfile=$(basename ${payload})" >> "$GITHUB_OUTPUT"
           mkdir -p ${{ runner.temp }}/package
           unzip -j pkg.zip ${payload}
 
