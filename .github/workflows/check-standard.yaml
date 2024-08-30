@@ -85,9 +85,9 @@ jobs:
           # extract to working dir
           tar -xzvf "${{ runner.temp }}/${{ matrix.pkg }}"*.tar.gz
           # move package contents to working dir
-          mv "${{ matrix.pkg }}"/* .
+          mv --verbose "${{ matrix.pkg }}"/* .
           # removing empty folder
-          rm "${{ matrix.pkg }}"
+          rm -rf "${{ matrix.pkg }}"
 
       - uses: r-lib/actions/setup-pandoc@v2
 
