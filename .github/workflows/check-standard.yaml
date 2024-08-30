@@ -78,7 +78,7 @@ jobs:
           path: ${{ runner.temp }}
       - id: fetch-pkg
         run: |
-          setwd ${{ runner.temp }}
+          cd ${{ runner.temp }}
           ls -l 
           file ${{ matrix.pkg.file }}
           # extract to working dir
