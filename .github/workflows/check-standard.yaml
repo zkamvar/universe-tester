@@ -39,6 +39,7 @@ jobs:
       - id: download
         run: |
           curl -sSL -o pkg.zip https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.package }} && \
+          ls -l && \
           payload=$(unzip -l pkg.zip | grep tar.gz | sed 's/ \+//g' | cut -d, -f 5)
           echo "tarfile=$(basename ${payload})" >> "$GITHUB_OUTPUT"
           mkdir -p ${{ runner.temp }}/package
