@@ -82,6 +82,7 @@ jobs:
         run: |
           mkdir -p "${{ runner.temp }}/src"
           # unzip artifact into tmp dir
+          ls -l "${{ runner.temp }}"
           unzip "${{ runner.temp }}/${{ matrix.pkg }}.zip" \
           -d "${{ runner.temp }}/src"
           # untar to working dir
