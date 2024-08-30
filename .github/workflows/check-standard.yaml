@@ -22,7 +22,7 @@ jobs:
           {
             echo 'pkgs<<EOF'
             echo "$(curl -sSL https://hubverse-org.r-universe.dev/api/packages \
-            | jq -r '[.[]._file] | map(select(. | startswith("hub")))')" 
+                  | jq -r '[.[] | {file: ._file, package: .Package}] | map(select(. | startswith("hub")))')" 
             echo 'EOF' 
           } >> "$GITHUB_OUTPUT"
       - id: show-output
@@ -56,7 +56,7 @@ jobs:
     needs: [list, fetch]
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.pkg }} | ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.pkg.package }} | ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
@@ -81,14 +81,14 @@ jobs:
           path: ${{ runner.temp }}
       - id: fetch-pkg
         run: |
-          ls -l "${{ runner.temp }}/"
-          file "${{ runner.temp }}/${{ matrix.pkg }}"*.tar.gz
+          ls -l ${{ runner.temp }}/
+          file ${{ runner.temp }}/${{ matrix.pkg.file }}
           # extract to working dir
-          tar -xzvf "${{ runner.temp }}/${{ matrix.pkg }}"*.tar.gz
+          tar -xzvf "${{ runner.temp }}/${{ matrix.pkg.file }}
           # move package contents to working dir
-          mv -v "${{ matrix.pkg }}"/* .
+          mv -v ${{ matrix.pkg.package }}/* .
           # removing empty folder
-          rm -rf "${{ matrix.pkg }}"
+          rm -rf ${{ matrix.pkg.package }}
 
       # - uses: r-lib/actions/setup-pandoc@v2
 
