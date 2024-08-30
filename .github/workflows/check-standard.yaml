@@ -85,7 +85,7 @@ jobs:
           # extract to working dir
           tar -xzvf "${{ runner.temp }}/${{ matrix.pkg }}"*.tar.gz
           # move package contents to working dir
-          mv --verbose "${{ matrix.pkg }}"/* .
+          mv -v "${{ matrix.pkg }}"/* .
           # removing empty folder
           rm -rf "${{ matrix.pkg }}"
 
