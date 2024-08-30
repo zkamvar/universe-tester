@@ -27,7 +27,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - id: show-output
         run: |
-          jq '.[]' <<< "${{ steps.gather.outputs.pkgs }}"
+          jq '.[]' <<< '${{ steps.gather.outputs.pkgs }}'
   fetch:
     needs: list
     name: "Fetch Universe Packages"
