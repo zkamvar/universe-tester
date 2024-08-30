@@ -23,7 +23,7 @@ jobs:
           | jq -r '[.[].Package] | map(select(. | startswith(\"hub\"))'" \
           >> ${GITHUB_OUTPUT}
       - id: show-output
-        run: echo ${GITHUB_OUTPUT}
+        run: cat ${GITHUB_OUTPUT}
   fetch:
     needs: list
     name: "Fetch Universe Packages"
