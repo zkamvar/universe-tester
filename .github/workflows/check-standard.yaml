@@ -35,22 +35,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ${{ fromJSON(needs.list.outputs.pkgs) }}
+        pkg: ${{ fromJSON(needs.list.outputs.pkgs) }}
     steps:
       - id: download
         run: |
-          curl -fsSL -o pkg.zip "https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.package }}" && \
-          ls -l && \
-          payload=$(unzip -l pkg.zip | grep tar.gz | sed 's/ \+/,/g' | cut -d, -f 5)
-          echo "tarfile=$(basename ${payload})" >> "$GITHUB_OUTPUT"
+          curl -fsSL -o pkg.zip "https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.pkg.package }}"
           mkdir -p ${{ runner.temp }}/package
-          unzip -j pkg.zip ${payload}
+          unzip -j pkg.zip ${{ matrix.pkg.file }}
 
       - id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.package }}
-          path: ${{ steps.download.outputs.tarfile }}
+          name: ${{ matrix.pkg.package }}
+          path: ${{ matrix.pkg.file }}
 
   R-CMD-check:
     needs: [list, fetch]
