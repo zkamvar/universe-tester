@@ -22,6 +22,8 @@ jobs:
           echo "pkgs=curl -sSL https://hubverse-org.r-universe.dev/api/packages \
           | jq -r '[.[].Package] | map(select(. | startswith(\"hub\"))'" \
           >> ${GITHUB_OUTPUT}
+      - id: show output
+        run: echo ${GITHUB_OUTPUT}
   fetch:
     needs: list
     name: "Fetch Universe Packages"
