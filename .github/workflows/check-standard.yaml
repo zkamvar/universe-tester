@@ -41,7 +41,7 @@ jobs:
         run: |
           curl -fsSL -o pkg.zip "https://hubverse-org.r-universe.dev/api/snapshot/zip?types=src&packages=${{ matrix.pkg.package }}"
           mkdir -p ${{ runner.temp }}/package
-          unzip -j pkg.zip ${{ matrix.pkg.file }}
+          unzip -j pkg.zip src/contrib/${{ matrix.pkg.file }}
 
       - id: upload
         uses: actions/upload-artifact@v4
