@@ -80,7 +80,8 @@ jobs:
           path: ${{ runner.temp }}
       - id: fetch-pkg
         run: |
-          ls -l "${{ runner.temp }}"
+          ls -l "${{ runner.temp }}/${{ matrix.pkg }}*.tar.gz"
+          file "${{ runner.temp }}/${{ matrix.pkg }}*.tar.gz"
           # extract to working dir
           tar -xzvf "${{ runner.temp }}/${{ matrix.pkg }}*.tar.gz"
           # move package contents to working dir
