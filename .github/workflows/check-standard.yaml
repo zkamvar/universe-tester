@@ -4,6 +4,8 @@ on:
   push:
     branches: [main, master]
   workflow_dispatch:
+  schedule:
+    - cron: "47 14 * * 2"   # <=== Set to run at 14:47 on Tuesdays (avoiding 00:00 and top of the hour runs gives us a better chance for getting server time)
 
 name: "Check Universe Packages"
 
