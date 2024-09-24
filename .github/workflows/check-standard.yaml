@@ -23,7 +23,7 @@ jobs:
           {
             echo 'pkgs<<EOF'
             echo "$(curl -sSL https://hubverse-org.r-universe.dev/api/packages \
-                  | jq -r '[.[] | {file: ._file, package: .Package}] | map(select(.package | startswith("hub")))')" 
+                  | jq -r '[.[] | {file: ._file, package: .Package}] | map(select(.package | startswith("hub") and . != "hubStyle"))')" 
             echo 'EOF' 
           } >> "$GITHUB_OUTPUT"
       - id: show-output
